@@ -38,7 +38,7 @@ extern "C" {
 #endif
 
 
-    void motor();
+ 
     void turnleft();
     void turnright();
     void goforward();

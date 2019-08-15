@@ -130,7 +130,7 @@ void APP_Initialize ( void )
     /*DRV_ADC_Open();
     DRV_ADC_Start(); */ 
     
-    createQueue();
+    createQueue(10);
     INT1COUNT = 0;
     INT2COUNT = 0;
     
@@ -162,23 +162,71 @@ void APP_Tasks ( void )
     MOTOR_DATA motDat; 
     motDat.state = CHANGE;
     
+    int temp; 
     while (1) 
     {
         
         dbgOutputLoc(DLOC_WHILE_LOOP);
         
-        dbgOutputLoc(DLOC_APP_BEFORE_RECEIVE_QUEUE);
-        motorCommand = readQueue();
-        dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);
-        
-        /*vTaskDelay(pdMS_TO_TICKS(1000));
-        turnleft(); //how to test code 
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        /*goforward();
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        stop(); 
+        vTaskDelay(pdMS_TO_TICKS(1000));  
+         */ 
+           
+        /*goforward(); //how to test code 
+        vTaskDelay(pdMS_TO_TICKS(2000));
         turnright();
-        vTaskDelay(pdMS_TO_TICKS(2000)); */
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        gobackward(); //how to test code 
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        /*turnleft(); //how to test code 
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        stop();
+        vTaskDelay(pdMS_TO_TICKS(5000));*/
+        //dbgOutputLoc(0x88);
         
-       /*  Ignore this since we're not doing encoders 
-        * if(motorCommand.location == 0){ // test thread 
+        /*dbgOutputLoc(DLOC_APP_BEFORE_RECEIVE_QUEUE);
+        motorCommand = readQueue();
+        dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);*/
+        
+        dbgUARTVal(5);
+        
+        
+        
+        /*if(motorCommand.location == 2)
+            dbgOutputVal(motorCommand.tick_left);
+        else 
+            dbgOutputVal(motorCommand.tick_right);
+        */
+        /*if(motorCommand.direction == 1){ //Forward 
+            goforward();
+        }
+        else if(motorCommand.direction == 2){ //Backward 
+            gobackward();
+        }
+        else if(motorCommand.direction == 3){ //Left 
+            turnleft();
+        }
+         else if(motorCommand.direction == 4){ //Right 
+             turnright();
+        }
+         else if(motorCommand.direction == 5){ //Stop
+             stop();
+        }
+         else{
+             halt();
+         }*/
+        
+        //send package here 
+        // {name, status, ready, direction, string}
+        
+        
+        //vTaskDelay(pdMS_TO_TICKS(5000));
+
+        
+        //Ignore this since we're not doing encoders 
+        /*if(motorCommand.location == 0){ // test thread 
             
         }
         else if(motorCommand.location == 1){ // INT1

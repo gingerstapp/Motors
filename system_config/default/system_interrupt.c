@@ -75,30 +75,30 @@ void IntHandlerExternalInterruptInstance0(void)
     
     
     //Pin 2, Interrupt 1 
-   /* dbgOutputLoc(DLOC_INT1_ISR_ENTER);
-    INT1COUNT++;
+    //dbgOutputLoc(DLOC_INT1_ISR_ENTER);
+    /*INT1COUNT++;
     BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
     
     MOTOR_COMMAND temp; 
     temp.location = 2; 
     temp.tick_left = INT1COUNT;
     
-    
-    dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
-    sendQueue(temp, pxHigherPriorityTaskWoken);
-    dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
-    
+    if(INT1COUNT == 100){        
+        dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
+        sendQueue(temp, pxHigherPriorityTaskWoken);
+        dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
+    }
     */
     PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_EXTERNAL_1);
-    dbgOutputLoc(DLOC_INT1_ISR_LEAVE);
+   // dbgOutputLoc(DLOC_INT1_ISR_LEAVE);
 }
 void IntHandlerExternalInterruptInstance1(void)
 {
     //you can ignore this since we're not doing encoders 
     
     //Pin 7, Interrupt 2 
-    /*dbgOutputLoc(DLOC_INT2_ISR_ENTER);
-    BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
+    //dbgOutputLoc(DLOC_INT2_ISR_ENTER);
+    /*BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
     
     INT2COUNT++;
     
@@ -106,24 +106,30 @@ void IntHandlerExternalInterruptInstance1(void)
     temp.location = 3;
     temp.tick_right = INT2COUNT;
     
-    dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
-    sendQueue(temp, pxHigherPriorityTaskWoken);
-    dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
+    if(INT2COUNT == 100){
+        dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
+        sendQueue(temp, pxHigherPriorityTaskWoken);
+        dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
+    }
     */
-
-    
     PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_EXTERNAL_2);
-    dbgOutputLoc(DLOC_INT2_ISR_LEAVE);
+    //dbgOutputLoc(DLOC_INT2_ISR_LEAVE);
 }
  
-
+int temp2 = 0;
 void IntHandlerDrvTmrInstance0(void)
 {
     dbgOutputLoc(DLOC_TIMER_ISR_ENTER);
     BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
-
     
- 
+    MOTOR_COMMAND temp;
+    temp.location = 1;
+    temp.tick_right = 5;
+       
+    //dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
+    //sendQueue(temp, pxHigherPriorityTaskWoken);
+    //dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
+     
     PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_3);
     dbgOutputLoc(DLOC_TIMER_ISR_LEAVE);
 }

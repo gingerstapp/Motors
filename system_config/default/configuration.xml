@@ -323,7 +323,7 @@
       <Template dnOrder="12">
         <Name dnOrder="0">drv_usart_static.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/driver/usart/src</Path>
-        <Checksum dnOrder="2">F47B08B2DEB81613A0FD3A76E244E9A9</Checksum>
+        <Checksum dnOrder="2">C0AC7635E1BEC3762B4C23070BA8753C</Checksum>
       </Template>
       <Template dnOrder="13">
         <Name dnOrder="0">system_init.c</Name>
