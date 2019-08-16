@@ -131,8 +131,6 @@ void APP_Initialize ( void )
     DRV_ADC_Start(); */ 
     
     createQueue(10);
-    int1count = 0;
-    int2count = 0;
     
     DRV_OC0_Enable();
     DRV_OC1_Enable();
@@ -161,11 +159,14 @@ void APP_Tasks ( void )
     dbgOutputLoc(DLOC_TASKS);
     
     MOTOR_COMMAND motorCommand; 
+    MOTOR_COMMAND *pMotorCommand; 
+    motorCommand.tick_right = 9;
+    motorCommand.location = 3;
     MOTOR_DATA motDat; 
     motDat.state = CHANGE;
     
     
-    
+    int displacement = 0; 
     int temp; 
     int de1 = 0;
     while (1) 
@@ -176,16 +177,18 @@ void APP_Tasks ( void )
         }
         
         //dbgUARTVal(5);
-        goforward();
+        //goforward();
         
         //dbgOutputLoc(DLOC_APP_BEFORE_RECEIVE_QUEUE);
         //motorCommand = readQueue();
-        /*if(xQueueReceive(xQueue, &motorCommand, (( TickType_t ) 10))){
+        if(xQueueReceive(xQueue, &(pMotorCommand),(TickType_t ) 10)){
             dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);
-            dbgUARTVal('0'+(motorCommand.tick_right %10));
-            //dbgUARTVal('0'+(motorCommand.location %10));
-            dbgUARTVal(':');    
-        }*/
+            //dbgUARTVal('0'+(pMotorCommand->tick_right));
+           // dbgUARTVal(',');
+            //dbgUARTVal('0'+(pMotorCommand->location %10));
+            //dbgUARTVal(':');    
+            displacement++;
+        }
          
         /*dbgOutputLoc(DLOC_APP_BEFORE_RECEIVE_QUEUE);
         motorCommand = readQueue();
@@ -194,7 +197,7 @@ void APP_Tasks ( void )
         dbgUARTVal(motorCommand.location); // A5 ?? */
         //dbgUARTVal(7);
         
-        /*if(!DRV_USART0_ReceiverBufferIsEmpty()){
+        if(!DRV_USART0_ReceiverBufferIsEmpty()){
             dbgOutputLoc(DLOC_APP_BEFORE_READ_UART);
             unsigned int comm = DRV_USART0_ReadByte();
             dbgOutputLoc(test2);
@@ -211,11 +214,24 @@ void APP_Tasks ( void )
                 turnleft();
             else if(comm == 'r')
                 turnright();
+            else if (comm == 'm'){
+                 //display total displacement 
+                char tempstr[5]; 
+                sprintf(tempstr, "%d", displacement);
+                int len = strlen(tempstr);
+                int i = 0;
+                for(; i < len ; i ++){
+                    dbgUARTVal(tempstr[i]);
+                    //dbgUARTVal("\n");
+                }
+            }
             else {
                 //ignore 
             }
-        }*/
+            
+        }
         
+            
         
         /*
          * Make sure to set baudset 

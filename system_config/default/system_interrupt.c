@@ -68,7 +68,10 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // Section: System Interrupt Vector Functions
 // *****************************************************************************
 // *****************************************************************************
- 
+static int int1count = 0; 
+static int int2count = 0; 
+
+
 void IntHandlerExternalInterruptInstance0(void)
 {
     //you can ignore this since we're not doing encoders 
@@ -99,6 +102,7 @@ void IntHandlerExternalInterruptInstance1(void)
     //Pin 7, Interrupt 2 
     dbgOutputLoc(DLOC_INT2_ISR_ENTER);
     BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
+    static int inc1 = 0;
     
     /*if(fb == 1)    
         int2count++;
@@ -113,7 +117,7 @@ void IntHandlerExternalInterruptInstance1(void)
     
     MOTOR_COMMAND temp;
     temp.location = 1;
-    temp.tick_right = 8;
+    temp.tick_right = inc1;
     
     
 
@@ -123,9 +127,10 @@ void IntHandlerExternalInterruptInstance1(void)
     
     if(int2count >= 70){
 //        dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
-        sendQueue(temp, pxHigherPriorityTaskWoken);
+        sendQueue(&temp, pxHigherPriorityTaskWoken);
         dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
         int2count = 0; 
+        inc1++;
     } else {
         dbgOutputLoc(DLOC_INT2_ISR_LEAVE);
     }

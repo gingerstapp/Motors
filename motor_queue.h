@@ -23,12 +23,12 @@ typedef struct{
 } MOTOR_COMMAND;
     //void sendQueue(unsigned int sendValue, BaseType_t pxHigherPriorityTaskWoken);
     //unsigned int readQueue(void);
-    void sendQueue(MOTOR_COMMAND sendValue, BaseType_t pxHigherPriorityTaskWoken);
+    void sendQueue(MOTOR_COMMAND *sendValue, BaseType_t pxHigherPriorityTaskWoken);
     MOTOR_COMMAND readQueue(void);
     void createQueue(int size);
     
     
-    static QueueHandle_t xQueue;
+    QueueHandle_t xQueue;
 
 
 #ifdef	__cplusplus
