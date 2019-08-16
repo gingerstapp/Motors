@@ -131,11 +131,13 @@ void APP_Initialize ( void )
     DRV_ADC_Start(); */ 
     
     createQueue(10);
-    INT1COUNT = 0;
-    INT2COUNT = 0;
+    int1count = 0;
+    int2count = 0;
     
     DRV_OC0_Enable();
     DRV_OC1_Enable();
+    
+    DRV_USART0_BaudSet(9600);
     
   //  PLIB_PORTS_Write(PORTS_ID_0, PORT_CHANNEL_E, 0x21);
     
@@ -162,11 +164,74 @@ void APP_Tasks ( void )
     MOTOR_DATA motDat; 
     motDat.state = CHANGE;
     
+    
+    
     int temp; 
+    int de1 = 0;
     while (1) 
     {
+        if (de1++ > 1000) {
+            de1=0;
+            dbgOutputLoc(DLOC_WHILE_LOOP);
+        }
         
-        dbgOutputLoc(DLOC_WHILE_LOOP);
+        //dbgUARTVal(5);
+        goforward();
+        
+        //dbgOutputLoc(DLOC_APP_BEFORE_RECEIVE_QUEUE);
+        //motorCommand = readQueue();
+        /*if(xQueueReceive(xQueue, &motorCommand, (( TickType_t ) 10))){
+            dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);
+            dbgUARTVal('0'+(motorCommand.tick_right %10));
+            //dbgUARTVal('0'+(motorCommand.location %10));
+            dbgUARTVal(':');    
+        }*/
+         
+        /*dbgOutputLoc(DLOC_APP_BEFORE_RECEIVE_QUEUE);
+        motorCommand = readQueue();
+        dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);
+        dbgUARTVal(6);
+        dbgUARTVal(motorCommand.location); // A5 ?? */
+        //dbgUARTVal(7);
+        
+        /*if(!DRV_USART0_ReceiverBufferIsEmpty()){
+            dbgOutputLoc(DLOC_APP_BEFORE_READ_UART);
+            unsigned int comm = DRV_USART0_ReadByte();
+            dbgOutputLoc(test2);
+            dbgUARTVal(comm);
+            dbgOutputLoc(DLOC_APP_AFTER_READ_UART);
+            
+            if(comm == 'f')
+                goforward();
+            else if(comm == 'b')
+                gobackward();
+            else if(comm == 's')
+                stop();
+            else if(comm == 'l')
+                turnleft();
+            else if(comm == 'r')
+                turnright();
+            else {
+                //ignore 
+            }
+        }*/
+        
+        
+        /*
+         * Make sure to set baudset 
+         * 
+         * 8 bit, no parity, 1 stop 
+         * 
+         * if!bufferisEmpty
+         *  comm = readbyte ()
+         * switch comm 
+         *  'f' forward 
+         *  default : error! halt or ignore 
+         * 
+         * if fl, does it stop going forward or does it ignore the left? Does it only send with eol comm? 
+         *    * If it is in the middle of a process (left or right) or if doing distance 
+         *     - either want to flush (read doc) or throw away or can do eol only 
+         */
         
         /*goforward();
         vTaskDelay(pdMS_TO_TICKS(2000));
@@ -190,8 +255,7 @@ void APP_Tasks ( void )
         motorCommand = readQueue();
         dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);*/
         
-        dbgUARTVal(5);
-        
+     
         
         
         /*if(motorCommand.location == 2)

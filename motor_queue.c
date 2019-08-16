@@ -20,6 +20,7 @@ MOTOR_COMMAND readQueue(void) {
     //don't need to check if read value received because of this setting
     xQueueReceive(xQueue, &value, portMAX_DELAY);
     return value;
+    dbgOutputLoc(DLOC_QUEUE_RECEIVE_OUT);
 }
 
 void createQueue(int size)

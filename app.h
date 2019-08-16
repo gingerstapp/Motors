@@ -88,8 +88,9 @@ extern "C" {
     #include "debug.h"
     #include "motor_queue.h"
     #include "motor_state.h"
-    static int INT1COUNT; 
-    static int INT2COUNT;
+    static int int1count = 0; 
+    static int int2count = 0;
+    static int fb = 0; //0 = other, 1 = forward, 2 = backward 
 
 // *****************************************************************************
 // *****************************************************************************

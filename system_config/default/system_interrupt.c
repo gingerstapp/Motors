@@ -97,41 +97,62 @@ void IntHandlerExternalInterruptInstance1(void)
     //you can ignore this since we're not doing encoders 
     
     //Pin 7, Interrupt 2 
-    //dbgOutputLoc(DLOC_INT2_ISR_ENTER);
-    /*BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
-    
-    INT2COUNT++;
-    
-    MOTOR_COMMAND temp;
-    temp.location = 3;
-    temp.tick_right = INT2COUNT;
-    
-    if(INT2COUNT == 100){
-        dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
-        sendQueue(temp, pxHigherPriorityTaskWoken);
-        dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
-    }
-    */
-    PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_EXTERNAL_2);
-    //dbgOutputLoc(DLOC_INT2_ISR_LEAVE);
-}
- 
-int temp2 = 0;
-void IntHandlerDrvTmrInstance0(void)
-{
-    dbgOutputLoc(DLOC_TIMER_ISR_ENTER);
+    dbgOutputLoc(DLOC_INT2_ISR_ENTER);
     BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
+    
+    /*if(fb == 1)    
+        int2count++;
+    else if (fb == 2)
+        int2count--;*/
+    
+    /*MOTOR_COMMAND temp;
+    temp.location = 3;
+    temp.tick_right = int2count;*/
+    
+    int2count++;
     
     MOTOR_COMMAND temp;
     temp.location = 1;
-    temp.tick_right = 5;
+    temp.tick_right = 8;
+    
+    
+
+    //dbgUARTVal(9);
+    //DRV_USART0_WriteByte(9); 
+    //dbgOutputLoc(test3);
+    
+    if(int2count >= 70){
+//        dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
+        sendQueue(temp, pxHigherPriorityTaskWoken);
+        dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
+        int2count = 0; 
+    } else {
+        dbgOutputLoc(DLOC_INT2_ISR_LEAVE);
+    }
+    
+    
+    PLIB_INT_SourceFlagClear(INT_ID_0, INT_SOURCE_EXTERNAL_2);
+     
+    
+}
+ 
+
+void IntHandlerDrvTmrInstance0(void)
+{
+    //dbgOutputLoc(DLOC_TIMER_ISR_ENTER);
+    BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
+    
+    /*MOTOR_COMMAND temp;
+    temp.location = 1;
+    temp.tick_right = 9;
        
-    //dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
-    //sendQueue(temp, pxHigherPriorityTaskWoken);
-    //dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
+    dbgOutputLoc(DLOC_BEFORE_QUEUE_SEND);
+    sendQueue(temp, pxHigherPriorityTaskWoken);
+    dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
+    */
      
     PLIB_INT_SourceFlagClear(INT_ID_0,INT_SOURCE_TIMER_3);
-    dbgOutputLoc(DLOC_TIMER_ISR_LEAVE);
+    //dbgOutputLoc(DLOC_TIMER_ISR_LEAVE);
 }
 
 /*******************************************************************************
