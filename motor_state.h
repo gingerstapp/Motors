@@ -13,14 +13,15 @@ extern "C" {
 typedef enum
 {
 	/* Application's state machine's initial state. */
-    CHANGE,
+    STOP,
     FORWARD,
     BACK,
     LEFT,
-    RIGHT,
-    STOP
+    RIGHT
 
 } MOTOR_STATES;
+
+static MOTOR_STATES motState = STOP; 
 
 typedef struct
 {
@@ -35,7 +36,12 @@ typedef struct
 
 } MOTOR_DATA;
 
-MOTOR_DATA updatefsm(MOTOR_DATA motdat,unsigned int changeMotor);
+void updatefsm(unsigned int dat, int dist);
+void stopState(MOTOR_STATES *motorState, unsigned int dat, int dist);
+void forwardState(MOTOR_STATES *motorState, unsigned int dat, int dist);
+void backwardState(MOTOR_STATES *motorState, unsigned int dat, int dist);
+void leftState(MOTOR_STATES *motorState, unsigned int dat, int dist);
+void rightState(MOTOR_STATES *motorState, unsigned int dat, int dist);
 
 #ifdef	__cplusplus
 }

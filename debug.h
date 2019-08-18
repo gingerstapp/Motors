@@ -42,7 +42,7 @@ extern "C" {
 #define DLOC_APP_BEFORE_RECEIVE_QUEUE (0x27)
 #define DLOC_APP_AFTER_RECEIVE_QUEUE (0x28)
 #define DLOC_QUEUE_SEND (0x29)
-#define DLOC_QUEUE_RECEIVE_OUT (0x35)
+#define DLOC_QUEUE_RECEIVE_OUT (0x2A)
     
 //timer isr 
 #define DLOC_TIMER_ISR_ENTER (0x30)
@@ -73,10 +73,19 @@ extern "C" {
 // ISR - INT 2
 #define DLOC_INT2_ISR_ENTER (0x61)
 #define DLOC_INT2_ISR_LEAVE (0x62) 
+
+#define DLOC_NOT_EOL (0x64)
+#define DLOC_APP_DLOC_EOL (0x65)
+#define DLOC_NOT_EOL_NOT0A (0x66)
     
-#define test1 (0x63)
-#define test2 (0x64)
-#define test3 (0x65)
+#define DLOC_STATE_STOP (0x71)
+#define DLOC_STATE_FORWARD (0x72)
+#define DLOC_STATE_BACKWARD (0x73)
+#define DLOC_STATE_LEFT (0x74)
+#define DLOC_STATE_RIGHT (0x75)
+    
+
+
     
 void dbgOutputVal(unsigned int outVal);
 void dbgUARTVal(unsigned char outVal);

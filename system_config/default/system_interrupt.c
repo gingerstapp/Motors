@@ -131,6 +131,7 @@ void IntHandlerExternalInterruptInstance1(void)
         dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
         int2count = 0; 
         inc1++;
+        
     } else {
         dbgOutputLoc(DLOC_INT2_ISR_LEAVE);
     }

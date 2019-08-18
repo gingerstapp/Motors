@@ -63,6 +63,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 
 
 #define ADCBUFF 0
+#define NOCHANGE -1
 
 
 // DOM-IGNORE-BEGIN
@@ -90,6 +91,7 @@ extern "C" {
     #include "motor_state.h"
    
     static int fb = 0; //0 = other, 1 = forward, 2 = backward 
+    int displacement;
 
 // *****************************************************************************
 // *****************************************************************************

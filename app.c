@@ -162,168 +162,124 @@ void APP_Tasks ( void )
     MOTOR_COMMAND *pMotorCommand; 
     motorCommand.tick_right = 9;
     motorCommand.location = 3;
-    MOTOR_DATA motDat; 
-    motDat.state = CHANGE;
+
+    char commStr [20] = "";
+    unsigned int charComm;
+    int distComm = NOCHANGE;
     
-    
-    int displacement = 0; 
+    displacement = 0; 
     int temp; 
     int de1 = 0;
     while (1) 
     {
-        if (de1++ > 1000) {
-            de1=0;
-            dbgOutputLoc(DLOC_WHILE_LOOP);
-        }
         
-        //dbgUARTVal(5);
-        //goforward();
-        
-        //dbgOutputLoc(DLOC_APP_BEFORE_RECEIVE_QUEUE);
-        //motorCommand = readQueue();
+        //updatefsm('E', -1); //continue
+        //distComm = -1;
         if(xQueueReceive(xQueue, &(pMotorCommand),(TickType_t ) 10)){
             dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);
-            //dbgUARTVal('0'+(pMotorCommand->tick_right));
-           // dbgUARTVal(',');
-            //dbgUARTVal('0'+(pMotorCommand->location %10));
-            //dbgUARTVal(':');    
             displacement++;
+            updatefsm('E', NOCHANGE); //continue
+            /*dbgUARTVal('D');
+            dbgUARTVal(displacement + '0');
+            dbgUARTVal('d');
+            dbgUARTVal(distComm + '0');*/
+            
         }
          
-        /*dbgOutputLoc(DLOC_APP_BEFORE_RECEIVE_QUEUE);
-        motorCommand = readQueue();
-        dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);
-        dbgUARTVal(6);
-        dbgUARTVal(motorCommand.location); // A5 ?? */
-        //dbgUARTVal(7);
-        
+
         if(!DRV_USART0_ReceiverBufferIsEmpty()){
             dbgOutputLoc(DLOC_APP_BEFORE_READ_UART);
             unsigned int comm = DRV_USART0_ReadByte();
-            dbgOutputLoc(test2);
             dbgUARTVal(comm);
             dbgOutputLoc(DLOC_APP_AFTER_READ_UART);
             
-            if(comm == 'f')
-                goforward();
-            else if(comm == 'b')
-                gobackward();
-            else if(comm == 's')
-                stop();
-            else if(comm == 'l')
-                turnleft();
-            else if(comm == 'r')
-                turnright();
-            else if (comm == 'm'){
-                 //display total displacement 
-                char tempstr[5]; 
-                sprintf(tempstr, "%d", displacement);
-                int len = strlen(tempstr);
-                int i = 0;
-                for(; i < len ; i ++){
-                    dbgUARTVal(tempstr[i]);
-                    //dbgUARTVal("\n");
+            //int distComm = 10;
+            //updatefsm(comm, distComm);
+            
+            /*
+             * L and R make it freeze 
+             * 
+             */
+             
+            
+            if(comm != '\x0d' && comm != '\x0a'){
+                //add to command string 
+                //strcat(commStr,(char []) comm);
+                dbgOutputLoc(DLOC_APP_DLOC_EOL);
+                int slen = strlen(commStr);
+                commStr[slen] = (char) comm; commStr[slen+1] = '\0';
+                
+            }
+            else{
+                //end of line 
+                dbgOutputLoc(DLOC_NOT_EOL);
+                if (comm == '\x0a') {
+                    break;
                 }
+                dbgOutputLoc(DLOC_NOT_EOL_NOT0A);
+                
+                
+                distComm = NOCHANGE;
+                
+                int len = strlen(commStr);
+                //dbgUARTVal('D');
+                //dbgUARTVal(displacement + '0');
+                
+                
+                //dbgUARTVal('L');
+                //dbgUARTVal(len + '0');
+                
+                if(commStr[0] == 'f' || commStr[0] == 'b'){ //check first character for direction 
+                    //dbgUARTVal('0');
+                    
+                    charComm = commStr[0];
+                    if(commStr[1] == ' '){
+                        //dbgUARTVal('y');
+                        int i;
+                        char tempNum[5]; tempNum[0]='\0';
+                        
+                        for (i=2; i<len; i++){
+                            //dbgUARTVal(commStr[i]);
+                            if(isdigit(commStr[i])){
+                                //strcat(tempNum, commStr[i]);
+                                //dbgUARTVal('d');
+                                int templen = strlen(tempNum);
+                                tempNum[templen] = commStr[i]; tempNum[templen + 1 ] = '\0';
+                            }
+                            else{
+                                updatefsm(charComm, NOCHANGE);
+                                break;
+                            }
+                        }
+                        distComm = atoi(tempNum);
+                        //dbgUARTVal('N');
+                        //dbgUARTVal(distComm + '0');
+                        //updatefsm(charComm, distComm);
+                    }
+                    else {
+                        distComm = NOCHANGE;
+                    }
+                    
+                    
+                    updatefsm(charComm, distComm);
+                }
+                else if(commStr[0] == 'l' || commStr[0] == 'r' || commStr[0] == 's'){
+                    //dbgUARTVal('2');
+                    charComm = commStr[0];
+                    updatefsm(charComm, NOCHANGE);
+                }
+                else {
+                    dbgUARTVal('E');
+                    dbgUARTVal('R');
+                    dbgUARTVal('R');
+                    dbgUARTVal('O');
+                    dbgUARTVal('R');
+                }
+                
+                commStr[0] = '\0' ; //empty the string 
             }
-            else {
-                //ignore 
-            }
             
         }
-        
-            
-        
-        /*
-         * Make sure to set baudset 
-         * 
-         * 8 bit, no parity, 1 stop 
-         * 
-         * if!bufferisEmpty
-         *  comm = readbyte ()
-         * switch comm 
-         *  'f' forward 
-         *  default : error! halt or ignore 
-         * 
-         * if fl, does it stop going forward or does it ignore the left? Does it only send with eol comm? 
-         *    * If it is in the middle of a process (left or right) or if doing distance 
-         *     - either want to flush (read doc) or throw away or can do eol only 
-         */
-        
-        /*goforward();
-        vTaskDelay(pdMS_TO_TICKS(2000));
-        stop(); 
-        vTaskDelay(pdMS_TO_TICKS(1000));  
-         */ 
-           
-        /*goforward(); //how to test code 
-        vTaskDelay(pdMS_TO_TICKS(2000));
-        turnright();
-        vTaskDelay(pdMS_TO_TICKS(2000));
-        gobackward(); //how to test code 
-        vTaskDelay(pdMS_TO_TICKS(1000));
-        /*turnleft(); //how to test code 
-        vTaskDelay(pdMS_TO_TICKS(1000));
-        stop();
-        vTaskDelay(pdMS_TO_TICKS(5000));*/
-        //dbgOutputLoc(0x88);
-        
-        /*dbgOutputLoc(DLOC_APP_BEFORE_RECEIVE_QUEUE);
-        motorCommand = readQueue();
-        dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);*/
-        
-     
-        
-        
-        /*if(motorCommand.location == 2)
-            dbgOutputVal(motorCommand.tick_left);
-        else 
-            dbgOutputVal(motorCommand.tick_right);
-        */
-        /*if(motorCommand.direction == 1){ //Forward 
-            goforward();
-        }
-        else if(motorCommand.direction == 2){ //Backward 
-            gobackward();
-        }
-        else if(motorCommand.direction == 3){ //Left 
-            turnleft();
-        }
-         else if(motorCommand.direction == 4){ //Right 
-             turnright();
-        }
-         else if(motorCommand.direction == 5){ //Stop
-             stop();
-        }
-         else{
-             halt();
-         }*/
-        
-        //send package here 
-        // {name, status, ready, direction, string}
-        
-        
-        //vTaskDelay(pdMS_TO_TICKS(5000));
-
-        
-        //Ignore this since we're not doing encoders 
-        /*if(motorCommand.location == 0){ // test thread 
-            
-        }
-        else if(motorCommand.location == 1){ // INT1
-            //ticksleft
-        }
-        else if(motorCommand.location == 2){ //INT2 
-            //ticksright 
-        }
-        else{
-            
-        }*/
-            
-        //motDat = updatefsm(motDat, motorCommand);
-        
-        
-        //vTaskDelay(pdMS_TO_TICKS(1000));
-        
     }
 }
 

@@ -10,7 +10,7 @@ void turnleft(){
     
     fb = 0;
     
-    vTaskDelay(pdMS_TO_TICKS(1950));
+    vTaskDelay(pdMS_TO_TICKS(2000));
     dbgOutputLoc(DLOC_LEFT_END);
     stop();
 }
@@ -25,7 +25,7 @@ void turnright(){
     
     fb = 0;
     
-    vTaskDelay(pdMS_TO_TICKS(1600));
+    vTaskDelay(pdMS_TO_TICKS(1550));
     
     dbgOutputLoc(DLOC_RIGHT_END);
     stop();
