@@ -126,19 +126,13 @@ void APP_Initialize ( void )
     
     //initialize drivers
     DRV_TMR0_Start();
-//    DRV_USART0_Initialize(); i don't think we need 
-    /*DRV_ADC_Open();
-    DRV_ADC_Start(); */ 
     
     createQueue(10);
     
     DRV_OC0_Enable();
     DRV_OC1_Enable();
-    
+ 
     DRV_USART0_BaudSet(9600);
-    
-  //  PLIB_PORTS_Write(PORTS_ID_0, PORT_CHANNEL_E, 0x21);
-    
     
 }
 
@@ -153,9 +147,6 @@ void APP_Initialize ( void )
 
 void APP_Tasks ( void )
 {
-    //initialize for state machine
-    //SENSOR_DATA currState;
-    //currState.state = STATE1;
     dbgOutputLoc(DLOC_TASKS);
     
     MOTOR_COMMAND motorCommand; 
@@ -172,43 +163,22 @@ void APP_Tasks ( void )
     int de1 = 0;
     while (1) 
     {
-        
-        //updatefsm('E', -1); //continue
-        //distComm = -1;
         if(xQueueReceive(xQueue, &(pMotorCommand),(TickType_t ) 10)){
             dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);
             displacement++;
-            updatefsm('E', NOCHANGE); //continue
-            /*dbgUARTVal('D');
-            dbgUARTVal(displacement + '0');
-            dbgUARTVal('d');
-            dbgUARTVal(distComm + '0');*/
-            
+            updatefsm('E', NOCHANGE); //continue            
         }
          
-
         if(!DRV_USART0_ReceiverBufferIsEmpty()){
             dbgOutputLoc(DLOC_APP_BEFORE_READ_UART);
             unsigned int comm = DRV_USART0_ReadByte();
             dbgUARTVal(comm);
             dbgOutputLoc(DLOC_APP_AFTER_READ_UART);
             
-            //int distComm = 10;
-            //updatefsm(comm, distComm);
-            
-            /*
-             * L and R make it freeze 
-             * 
-             */
-             
-            
             if(comm != '\x0d' && comm != '\x0a'){
-                //add to command string 
-                //strcat(commStr,(char []) comm);
                 dbgOutputLoc(DLOC_APP_DLOC_EOL);
                 int slen = strlen(commStr);
                 commStr[slen] = (char) comm; commStr[slen+1] = '\0';
-                
             }
             else{
                 //end of line 
@@ -218,31 +188,18 @@ void APP_Tasks ( void )
                 }
                 dbgOutputLoc(DLOC_NOT_EOL_NOT0A);
                 
-                
                 distComm = NOCHANGE;
                 
                 int len = strlen(commStr);
-                //dbgUARTVal('D');
-                //dbgUARTVal(displacement + '0');
-                
-                
-                //dbgUARTVal('L');
-                //dbgUARTVal(len + '0');
                 
                 if(commStr[0] == 'f' || commStr[0] == 'b'){ //check first character for direction 
-                    //dbgUARTVal('0');
-                    
                     charComm = commStr[0];
                     if(commStr[1] == ' '){
-                        //dbgUARTVal('y');
                         int i;
                         char tempNum[5]; tempNum[0]='\0';
                         
                         for (i=2; i<len; i++){
-                            //dbgUARTVal(commStr[i]);
                             if(isdigit(commStr[i])){
-                                //strcat(tempNum, commStr[i]);
-                                //dbgUARTVal('d');
                                 int templen = strlen(tempNum);
                                 tempNum[templen] = commStr[i]; tempNum[templen + 1 ] = '\0';
                             }
@@ -252,19 +209,14 @@ void APP_Tasks ( void )
                             }
                         }
                         distComm = atoi(tempNum);
-                        //dbgUARTVal('N');
-                        //dbgUARTVal(distComm + '0');
-                        //updatefsm(charComm, distComm);
                     }
                     else {
                         distComm = NOCHANGE;
                     }
                     
-                    
                     updatefsm(charComm, distComm);
                 }
                 else if(commStr[0] == 'l' || commStr[0] == 'r' || commStr[0] == 's'){
-                    //dbgUARTVal('2');
                     charComm = commStr[0];
                     updatefsm(charComm, NOCHANGE);
                 }

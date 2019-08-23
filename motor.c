@@ -8,9 +8,8 @@ void turnleft(){
     SYS_PORTS_PinSet(PORTS_ID_0, PORT_CHANNEL_D, 1);
     SYS_PORTS_PinSet(PORTS_ID_0, PORT_CHANNEL_G, 1);
     
-    fb = 0;
     
-    vTaskDelay(pdMS_TO_TICKS(2000));
+    vTaskDelay(pdMS_TO_TICKS(1750));
     dbgOutputLoc(DLOC_LEFT_END);
     stop();
 }
@@ -23,16 +22,14 @@ void turnright(){
     SYS_PORTS_PinSet(PORTS_ID_0, PORT_CHANNEL_C, 14);
     SYS_PORTS_PinClear (PORTS_ID_0, PORT_CHANNEL_G, 1);
     
-    fb = 0;
-    
-    vTaskDelay(pdMS_TO_TICKS(1550));
+    vTaskDelay(pdMS_TO_TICKS(1450));
     
     dbgOutputLoc(DLOC_RIGHT_END);
     stop();
 }
 
 void goforward(){ //parameters is distance 
-    //dbgOutputLoc(DLOC_FORWARD);
+    dbgOutputLoc(DLOC_FORWARD);
     
     //DIR1 C14 0, EN1 D0 1, DIR2 G1 0, EN2 D1 1
     SYS_PORTS_PinSet(PORTS_ID_0, PORT_CHANNEL_D, 0);
@@ -40,11 +37,6 @@ void goforward(){ //parameters is distance
     SYS_PORTS_PinClear (PORTS_ID_0, PORT_CHANNEL_C, 14);
     SYS_PORTS_PinClear (PORTS_ID_0, PORT_CHANNEL_G, 1);
     
-    fb = 1;
-    
-    
-
-    //dbgOutputLoc(DLOC_FORWARD_END);
 }
 
 void gobackward(){ //parameters is distance 
@@ -56,12 +48,6 @@ void gobackward(){ //parameters is distance
     SYS_PORTS_PinSet(PORTS_ID_0, PORT_CHANNEL_C, 14);
     SYS_PORTS_PinSet(PORTS_ID_0, PORT_CHANNEL_G, 1);
     
-    fb = 2;
-    
-   /* SYS_PORTS_Set(PORTS_ID_0, PORT_CHANNEL_D, 1, 0);
-    SYS_PORTS_Set(PORTS_ID_0, PORT_CHANNEL_D, 1, 1);
-    SYS_PORTS_Set(PORTS_ID_0, PORT_CHANNEL_C, 1, 14);
-    SYS_PORTS_Set(PORTS_ID_0, PORT_CHANNEL_G, 1, 1);*/
     dbgOutputLoc(DLOC_BACK_END);
 }
 void stop(){
@@ -74,8 +60,6 @@ void stop(){
     SYS_PORTS_PinClear (PORTS_ID_0, PORT_CHANNEL_D, 1);
     SYS_PORTS_PinClear (PORTS_ID_0, PORT_CHANNEL_C, 14);
     SYS_PORTS_PinClear (PORTS_ID_0, PORT_CHANNEL_G, 1);
-    
-    fb = 2; 
     
     dbgOutputLoc(DLOC_STOP_END);
 }

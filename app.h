@@ -90,7 +90,6 @@ extern "C" {
     #include "motor_queue.h"
     #include "motor_state.h"
    
-    static int fb = 0; //0 = other, 1 = forward, 2 = backward 
     int displacement;
 
 // *****************************************************************************
