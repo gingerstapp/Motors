@@ -58,8 +58,6 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "jsmn.h" 
 #include "uartFile.h"
 
-
-
 int jsoneq(const char *json, jsmntok_t *tok, const char *s);
 
 // *****************************************************************************
@@ -165,7 +163,7 @@ void APP_Tasks ( void )
     displacement = 0; 
     int temp; 
     int de1 = 0;
-    //printf("App-Task\n");
+    printf("App-Task\n");
     while (1) 
     {
         if(xQueueReceive(xQueue, &(pMotorCommand),(TickType_t ) 50)){
@@ -211,14 +209,22 @@ void APP_Tasks ( void )
                     //**! ERROR 
                     updatefsm('s', NOCHANGE);
                 }
-            } // end if location == 0 -> UART Thread 
+            }
             else if(motorCommand.location == 1){ // from INT 
                 displacement++;
                 updatefsm('E', NOCHANGE); //continue   
-            }     
+            }
+            /*int direction; //1=F, 2=B, 3=L, 4=R, 5=S
+            unsigned int distance; 
+            unsigned int tick_left; //INT1
+            unsigned int tick_right; //INT2
+            int location; //1 = TestThread, 2 */
             
-        } //end xqueue receive 
-    } // end while 
+            
+        }
+        //printf("M");
+        
+    }
 }
 
 
@@ -247,11 +253,8 @@ void USART_Tasks ( void )
     int de1 = 0;
     
     char opDef[50];
-    char paramDef[10];
-    
-    int status = 1;
-    char *message;
-    //char distDef[10];
+    char angleDef[10];
+    char distDef[10];
     
     int rovDist;
 	int rovAngle; 
@@ -262,7 +265,7 @@ void USART_Tasks ( void )
     
     const char *HttpRet = "HTTP/1.0 200 OK\r\nContent-Type: application/json\r\nContent-Length: %d\r\n\r\n%s";
     
-    //sendToUART("Hello World!");
+    sendToUART("Hello World!");
     while(1)
     {
         
@@ -276,13 +279,11 @@ void USART_Tasks ( void )
             dbgOutputLoc(DLOC_APP_AFTER_READ_UART);
             //parseChar((char) (comm & 0xff));
             if(bodyStr != NULL){
-                status =0;
-              
                 //it is finished parsing 
                 dbgOutputLoc(DLOC_APP_STRING_NOT_NULL);
                 int len = strlen(bodyStr);
-                //char sOut [2048];
-                //sprintf(sOut, HttpRet, len, bodyStr);
+                char sOut [2048];
+                sprintf(sOut, HttpRet, len, bodyStr);
                 dbgOutputLoc(DLOC_APP_AFTER_SPRINTF);
                 
                 //sendToUART("DONE!!");
@@ -296,25 +297,19 @@ void USART_Tasks ( void )
 
                 if (r < 0) { //checks to make sure it was successful 
                     //printf("Failed to parse JSON: %d\n", r); //exit out - send error **! 
-                    //sendToUART("FAILED TO PARSE JSON");
-                    status = 1; 
-                    message = "Failed to parse JSON";
-                    //goto errorOut;
-                    //continue;
+                    sendToUART("FAILED TO PARSE JSON");
+                    continue;
                 }
                 if (r < 1 || t[0].type != JSMN_OBJECT) {
                     //printf("Object expected\n"); //exit out **! Send error 
-                    //sendToUART("OBJECT EXPECTED");
-                    //continue;
-                    status = 1; 
-                    message = "Object expected";
-                    //goto errorOut;
+                    sendToUART("OBJECT EXPECTED");
+                    continue;
                 }
                 
                 //clear all variables for parsing operations 
                 opDef[0]='\0';
-                paramDef[0] = '\0';
-                //distDef[0] = '\0';
+                angleDef[0] = '\0';
+                distDef[0] = '\0';
                     
                 /*int j = 0;
                 for(; j < r-1; j++){
@@ -334,16 +329,18 @@ void USART_Tasks ( void )
                 
                 int j = 0;
                 for (; j < r-1; j++) {
-                    //sendToUART("hello");
+                    sendToUART("hello");
                     jsmntok_t key = t[j+1];
                     unsigned int length = key.end - key.start;
-                    //printf("len=%d, S=%d, E=%d\n",length, key.start, key.end);
+                    printf("len=%d, S=%d, E=%d\n",length, key.start, key.end);
                     //strncpy(opDef,bodyStr+key.start, length);
                     //memcpy(opDef, bodyStr+key.start, length);
+                    opDef[length] = '\0';
                     
-                    
-                    if (jsoneq(bodyStr, &t[j], "op") == 0) {
+                    if (jsoneq(bodyStr, &t[j], "Op") == 0) {
                         // We may use strndup() to fetch string value 
+                        jsmntok_t key = t[j+1];
+                        unsigned int length = key.end - key.start;
                         //printf("\nOP p=%p len=%d, S=%d, E=%d\n",bodyStr, length, key.start, key.end);
                         int k =0;
                         for(; k<length; k++){
@@ -351,47 +348,53 @@ void USART_Tasks ( void )
                         }
 //                        memcpy(opDef, bodyStr+key.start, length);
                         opDef[length] = '\0';
-                        //char temp[20];
-                        //sprintf(temp, "- Op: %s\n", opDef);
-                        //sendToUART(temp);
+                        char temp[20];
+                        sprintf(temp, "- Op: %s\n", opDef);
+                        sendToUART(temp);
                         j++;
                     }
                     else if (jsoneq(bodyStr, &t[j], "angle") == 0) {
+                        jsmntok_t key = t[j+1];
+                        unsigned int length = key.end - key.start;
                         //printf("\nangle p=%p len=%d, S=%d, E=%d\n",bodyStr, length, key.start, key.end);
                         int k =0;
                         for(; k<length; k++){
-                            paramDef[k] = *(bodyStr+(key.start+k));
+                            angleDef[k] = *(bodyStr+(key.start+k));
                         }
 //                        memcpy(angleDef, bodyStr+key.start, length);
-                        paramDef[length] = '\0';
-                        //char temp[10]; 
-                        rovAngle = atoi(paramDef);
-                        if(rovAngle <= 0) rovAngle = -1;
-                        //sprintf(temp, "- Angle: %i\n", rovAngle);
-                        //sendToUART(temp);
+                        angleDef[length] = '\0';
+                        char temp[10]; 
+                        rovAngle = atoi(angleDef);
+                        if(rovAngle <= 0) rovAngle = -1
+                        sprintf(temp, "- Angle: %i\n", rovAngle);
+                        sendToUART(temp);
                         j++;
                     }
                     else if (jsoneq(bodyStr, &t[j], "distance") == 0) {
+                        jsmntok_t key = t[j + 1];
+                        unsigned int length = key.end - key.start;
                         int k =0;
                         // printf("distance p=%p len=%d, S=%d, E=%d\n",bodyStr, length, key.start, key.end);
                         for(; k<length; k++){
-                            paramDef[k] = *(bodyStr+(key.start+k));
+                            angleDef[k] = *(bodyStr+(key.start+k));
                         }
 //                        memcpy(angleDef, bodyStr+key.start, length);
-                        paramDef[length] = '\0';
-                        //char temp[10];
-                        rovDist = atoi(paramDef);
+                        angleDef[length] = '\0';
+                        char temp[10];
+                        rovDist = atoi(distDef);
                         if(rovDist <= 0) rovDist = -1;
-                        //sprintf(temp, "- Distance: %i\n", rovDist);
-                        //sendToUART(temp);
+                        sprintf(temp, "- Distance: %i\n", rovDist);
+                        sendToUART(temp);
                         j++;
                     }
                     
                 }
-                
+                 
+           
+                sendToUART(sOut);
                
                 BaseType_t pxHigherPriorityTaskWoken = pdFALSE;
-                if(strcmp(opDef, "forward") == 0){
+                if(opDef == "forward"){
                     MOTOR_COMMAND temp;
                     temp.location = 0; //UART thread 
                     temp.direction = 1; //
@@ -401,11 +404,9 @@ void USART_Tasks ( void )
                     else{
                         temp.param = rovDist;
                     }
-                    //printf("OP SECTION");
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
-                    dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
                 }
-                else if(strcmp(opDef, "backward") == 0){
+                else if(opDef == "backward"){
                     MOTOR_COMMAND temp;
                     temp.location = 0; //UART thread 
                     temp.direction = 2; //backward 
@@ -416,9 +417,8 @@ void USART_Tasks ( void )
                         temp.param = rovDist;
                     }
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
-                    dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
                 }
-                else if(strcmp(opDef, "left") == 0){
+                else if(opDef == "left"){
                     MOTOR_COMMAND temp;
                     temp.location = 0; //UART thread 
                     temp.direction = 3; //left
@@ -429,9 +429,8 @@ void USART_Tasks ( void )
                         temp.param = rovAngle;
                     }
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
-                    dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
                 }
-                else if(strcmp(opDef, "right") == 0){
+                else if(opDef == "right"){
                     MOTOR_COMMAND temp;
                     temp.location = 0; //UART thread 
                     temp.direction = 4; //left
@@ -442,42 +441,27 @@ void USART_Tasks ( void )
                         temp.param = rovAngle;
                     }
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
-                    dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
                 }
-                else if(strcmp(opDef, "stop") == 0){
+                else if(opDef == "stop"){
                     MOTOR_COMMAND temp;
                     temp.location = 0; //UART thread 
                     temp.direction = 5; //left
                     temp.param = -1;
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
-                    dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
                 }
                 else{
-                    status = 1;
-                    message = "Error: Operation not recognized";
+                    sendToUART("Error: Operation not recognized");
                 }
+            }
                 
+        }
 
-                if(0 == status){ //OKAY 
-                    char sOut [1024];
-                    char *pCh = "{\"Status\":\"Ok\"}";
-                    //sprintf(sOut2,"{\"Status\":\"Ok\"}",opDef,paramDef);
-                    len = strlen(pCh);
-                    sprintf(sOut, HttpRet, len, pCh);
-                    sendToUART(sOut);
-                }
-                else{ //NOT OKAY 
-                    char sOut [1024];
-                    char sOut2[100];
-                    sprintf(sOut2,"{\"Status\":\"Fail\",\"message\",\"%s\"}",message);
-                    len = strlen(sOut2);
-                    sprintf(sOut, HttpRet, len, sOut2);
-                    sendToUART(sOut);
-                } //end else 
-            } //end if bodystr!=null
-        } //end if !USART empty 
-    } //endwhile            
-} //end function 
+
+        
+    }
+   
+           
+}
 
 
 int jsoneq(const char *json, jsmntok_t *tok, const char *s) 

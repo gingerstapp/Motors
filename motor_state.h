@@ -36,12 +36,12 @@ typedef struct
 
 } MOTOR_DATA;
 
-void updatefsm(unsigned int dat, int dist);
-void stopState(MOTOR_STATES *motorState, unsigned int dat, int dist);
-void forwardState(MOTOR_STATES *motorState, unsigned int dat, int dist);
-void backwardState(MOTOR_STATES *motorState, unsigned int dat, int dist);
-void leftState(MOTOR_STATES *motorState, unsigned int dat, int dist);
-void rightState(MOTOR_STATES *motorState, unsigned int dat, int dist);
+void updatefsm(unsigned int dat, int param);
+void stopState(MOTOR_STATES *motorState, unsigned int dat, int param);
+void forwardState(MOTOR_STATES *motorState, unsigned int dat, int param);
+void backwardState(MOTOR_STATES *motorState, unsigned int dat, int param);
+void leftState(MOTOR_STATES *motorState, unsigned int dat, int param);
+void rightState(MOTOR_STATES *motorState, unsigned int dat, int param);
 
 #ifdef	__cplusplus
 }

@@ -61,11 +61,10 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "timers.h"
 
 
-
 #define ADCBUFF 0
 #define NOCHANGE -1
 
-
+#define __cplusplus__strings__
 // DOM-IGNORE-BEGIN
 #ifdef __cplusplus  // Provide C++ Compatibility
 
@@ -84,14 +83,16 @@ extern "C" {
     #include <stdbool.h>
     #include <stddef.h>
     #include <stdlib.h>
+    #include <string.h>
     #include "system_config.h"
     #include "system_definitions.h"
     #include "debug.h"
     #include "motor_queue.h"
     #include "motor_state.h"
+    #include "uartFile.h"
    
-    int displacement;
-
+    extern int displacement;
+    
 // *****************************************************************************
 // *****************************************************************************
 // Section: Application Callback Routines

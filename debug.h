@@ -64,7 +64,11 @@ extern "C" {
     
 //UART 
 #define DLOC_APP_BEFORE_READ_UART (0x54)
-#define DLOC_APP_AFTER_READ_UART (0x55)    
+#define DLOC_APP_AFTER_READ_UART (0x55)  
+#define DLOC_APP_AFTER_JSMN_PARSE (0x56)
+#define DLOC_APP_STRING_NOT_NULL (0x57)
+#define DLOC_APP_AFTER_SPRINTF (0x58)    
+#define DLOC_APP_AFTER_SEND_UART (0x59)
     
 //ISR - INT1 
 #define DLOC_INT1_ISR_ENTER (0x51)

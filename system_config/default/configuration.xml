@@ -302,7 +302,7 @@
       <Template dnOrder="8">
         <Name dnOrder="0">drv_usart_static_byte_model.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/driver/usart/src</Path>
-        <Checksum dnOrder="2">29B92242D5EBC5F0D949EAC1AD786CA3</Checksum>
+        <Checksum dnOrder="2">6894878C954533D5E0878A38971DE747</Checksum>
       </Template>
       <Template dnOrder="9">
         <Name dnOrder="0">system_interrupt.c</Name>
@@ -323,7 +323,7 @@
       <Template dnOrder="12">
         <Name dnOrder="0">drv_usart_static.c</Name>
         <Path dnOrder="1">Source&amp;#160;Files/app/system_config/default/framework/driver/usart/src</Path>
-        <Checksum dnOrder="2">C0AC7635E1BEC3762B4C23070BA8753C</Checksum>
+        <Checksum dnOrder="2">C9944ED7818E4BFA65110B8267E90422</Checksum>
       </Template>
       <Template dnOrder="13">
         <Name dnOrder="0">system_init.c</Name>
