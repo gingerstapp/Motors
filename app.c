@@ -171,6 +171,9 @@ void APP_Tasks ( void )
         if(xQueueReceive(xQueue, &(pMotorCommand),(TickType_t ) 50)){
             motorCommand = *pMotorCommand;
             dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);
+            char temp[100];
+            sprintf(temp, "motor location : %d , direction: %d , param: %d \n", motorCommand.location, motorCommand.direction, motorCommand.param);
+            sendToUART(temp);
             if(motorCommand.location == 0){ // from UART thread 
                 if(motorCommand.direction == 1){ // f
                     if(motorCommand.param == -1){
@@ -394,6 +397,10 @@ void USART_Tasks ( void )
                         temp.param = rovDist;
                     }
                     //printf("OP SECTION");
+                    char tempstr[100];
+                    sprintf(tempstr, "FORWARD motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
+                    sendToUART(tempstr);
+                    
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
                     dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
                 }
@@ -408,6 +415,10 @@ void USART_Tasks ( void )
                     else{
                         temp.param = rovDist;
                     }
+                    char tempstr[100];
+                    sprintf(tempstr, "FORWARD motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
+                    sendToUART(tempstr);
+                    
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
                     dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
                 }
