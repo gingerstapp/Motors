@@ -351,7 +351,7 @@ void USART_Tasks ( void )
                         //sendToUART(temp);
                         j++;
                     }
-                    else if (jsoneq(bodyStr, &t[j], "angle") == 0) {
+                    else if (jsoneq(bodyStr, &t[j], "param") == 0) {
                         //printf("\nangle p=%p len=%d, S=%d, E=%d\n",bodyStr, length, key.start, key.end);
                         dbgOutputLoc(DLOC_UART_PARSE_ANGLE);
                         int k =0;
@@ -367,7 +367,7 @@ void USART_Tasks ( void )
                         //sendToUART(temp);
                         j++;
                     }
-                    else if (jsoneq(bodyStr, &t[j], "distance") == 0) {
+                    /*else if (jsoneq(bodyStr, &t[j], "distance") == 0) {
                         dbgOutputLoc(DLOC_UART_PARSE_DIST);
                         int k =0;
                         // printf("distance p=%p len=%d, S=%d, E=%d\n",bodyStr, length, key.start, key.end);
@@ -382,7 +382,7 @@ void USART_Tasks ( void )
                         //sprintf(temp, "- Distance: %i\n", rovDist);
                         //sendToUART(temp);
                         j++;
-                    }                    
+                    }    */                
                 } //end for parser 
                 
                
