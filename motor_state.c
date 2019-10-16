@@ -82,9 +82,9 @@ void forwardState(MOTOR_STATES *motorState, unsigned int dat, int param){
         goforward();
         in_Dist = param;
         displacement = 0;
-    }
-            
-    if(in_Dist!= -1 && displacement >= in_Dist){
+    }     
+    
+    if(in_Dist >= -1 && displacement >= in_Dist){
         //dbgUARTVal('F');
         displacement = 0;
         in_Dist = -1;
@@ -100,7 +100,7 @@ void backwardState(MOTOR_STATES *motorState, unsigned int dat, int param){
         in_Dist = param;
         displacement = 0;
     }
-    if(in_Dist!= -1 && displacement >= in_Dist){
+    if(in_Dist >= -1 && displacement >= in_Dist){
         displacement = 0;
         in_Dist = -1;
         *motorState = STOP;

@@ -157,7 +157,7 @@ void APP_Tasks ( void )
     dbgOutputLoc(DLOC_TASKS);
     
     MOTOR_COMMAND motorCommand; 
-    MOTOR_COMMAND *pMotorCommand; 
+    //MOTOR_COMMAND *pMotorCommand; 
     //motorCommand.tick_right = 9;
     //motorCommand.location = 3;
 
@@ -168,8 +168,8 @@ void APP_Tasks ( void )
     printf("App-Task\n");
     while (1) 
     {
-        if(xQueueReceive(xQueue, &(pMotorCommand),(TickType_t ) 50)){
-            motorCommand = *pMotorCommand;
+        if(xQueueReceive(xQueue, &motorCommand,(TickType_t ) 50)){
+            //motorCommand = *pMotorCommand;
             dbgOutputLoc(DLOC_APP_AFTER_RECEIVE_QUEUE);
             
             if(motorCommand.location == 0){ // from UART thread 
@@ -179,7 +179,7 @@ void APP_Tasks ( void )
                 
                 if(motorCommand.direction == 1){ // f
                     if(motorCommand.param == -1){
-                        updatefsm('f', NOCHANGE);
+                        updatefsm('f', DEFAULTPARAM);
                     }
                     else{
                         updatefsm('f', motorCommand.param);
@@ -188,7 +188,7 @@ void APP_Tasks ( void )
                 }      
                 else if(motorCommand.direction == 2){ //b
                     if(motorCommand.param == -1){
-                        updatefsm('b', NOCHANGE);
+                        updatefsm('b', DEFAULTPARAM);
                     }
                     else{
                         updatefsm('b', motorCommand.param);
@@ -197,7 +197,7 @@ void APP_Tasks ( void )
                 }
                 else if(motorCommand.direction == 3){ //l
                     if(motorCommand.param == -1){
-                        updatefsm('l', NOCHANGE);
+                        updatefsm('l', DEFAULTPARAM);
                     }
                     else{
                         updatefsm('l', motorCommand.param);
@@ -206,7 +206,7 @@ void APP_Tasks ( void )
                 }
                 else if(motorCommand.direction == 4){ //r
                     if(motorCommand.param == -1){
-                        updatefsm('r', NOCHANGE);
+                        updatefsm('r', DEFAULTPARAM);
                     }
                     else{
                         updatefsm('r', motorCommand.param);
@@ -214,7 +214,7 @@ void APP_Tasks ( void )
                     dbgOutputLoc(DLOC_APP_OP_RIGHT);
                 }
                 else if(motorCommand.direction == 5){ //s
-                    updatefsm('s', NOCHANGE);
+                    updatefsm('s', DEFAULTPARAM);
                     dbgOutputLoc(DLOC_APP_OP_STOP);
                 }
                 else{
@@ -400,7 +400,7 @@ void USART_Tasks ( void )
                     }
                     //printf("OP SECTION");
                     char tempstr[100];
-                    sprintf(tempstr, "FORWARD motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
+                    //sprintf(tempstr, "FORWARD motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
                     //sendToUART(tempstr);
                     //sendToUART("xxxxxxxxxxxxx");
                     
@@ -419,7 +419,7 @@ void USART_Tasks ( void )
                         temp.param = rovDist;
                     }
                     char tempstr[100];
-                    sprintf(tempstr, "BACKWARD motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
+                    //sprintf(tempstr, "BACKWARD motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
                     //sendToUART(tempstr);
                     
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
@@ -437,7 +437,7 @@ void USART_Tasks ( void )
                         temp.param = rovAngle;
                     }
                     char tempstr[100];
-                    sprintf(tempstr, "LEFT motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
+                    //sprintf(tempstr, "LEFT motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
                     
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
                     dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
@@ -454,7 +454,7 @@ void USART_Tasks ( void )
                         temp.param = rovAngle;
                     }
                     char tempstr[100];
-                    sprintf(tempstr, "RIGHT motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
+                    //sprintf(tempstr, "RIGHT motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
                     
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
                     dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
@@ -467,7 +467,7 @@ void USART_Tasks ( void )
                     temp.param = -1;
                     
                     char tempstr[100];
-                    sprintf(tempstr, "STOP motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
+                    //sprintf(tempstr, "STOP motor location : %d , direction: %d , param: %d \n", temp.location, temp.direction, temp.param);
                     
                     sendQueue(&temp, pxHigherPriorityTaskWoken);
                     dbgOutputLoc(DLOC_AFTER_QUEUE_SEND);
